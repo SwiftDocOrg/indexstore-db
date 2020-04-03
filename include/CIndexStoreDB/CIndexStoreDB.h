@@ -170,6 +170,12 @@ indexstoredb_delegate_event_get_kind(_Nonnull indexstoredb_delegate_event_t);
 INDEXSTOREDB_PUBLIC
 uint64_t indexstoredb_delegate_event_get_count(_Nonnull indexstoredb_delegate_event_t);
 
+INDEXSTOREDB_PUBLIC bool
+indexstoredb_index_symbol_occurrences_by_kind(
+    indexstoredb_index_t index,
+    indexstoredb_symbol_kind_t kind,
+    indexstoredb_symbol_occurrence_receiver_t receiver);
+
 /// Iterates over each symbol occurrence matching the given \p usr and \p roles.
 ///
 /// The occurrence passed to the receiver is only valid for the duration of the

@@ -23,6 +23,7 @@ using namespace IndexStoreDB;
 using namespace index;
 
 static indexstoredb_symbol_kind_t toCSymbolKind(SymbolKind K);
+static SymbolKind toIndexStoreDBSymbolKind(indexstoredb_symbol_kind_t K);
 
 namespace {
 
@@ -146,6 +147,19 @@ indexstoredb_delegate_event_get_kind(indexstoredb_delegate_event_t event) {
 
 uint64_t indexstoredb_delegate_event_get_count(indexstoredb_delegate_event_t event) {
   return reinterpret_cast<DelegateEvent *>(event)->count;
+}
+
+
+bool
+indexstoredb_index_symbol_occurrences_by_kind(
+    indexstoredb_index_t index,
+    indexstoredb_symbol_kind_t kind,
+    indexstoredb_symbol_occurrence_receiver_t receiver)
+{
+  auto obj = (IndexStoreDBObject<std::shared_ptr<IndexSystem>> *)index;
+    return obj->value->foreachCanonicalSymbolOccurrenceByKind(toIndexStoreDBSymbolKind(kind), true, [&](SymbolOccurrenceRef Occur) -> bool {
+      return receiver((indexstoredb_symbol_occurrence_t)Occur.get());
+    });
 }
 
 bool
@@ -391,6 +405,65 @@ static indexstoredb_symbol_kind_t toCSymbolKind(SymbolKind K) {
     return INDEXSTOREDB_SYMBOL_KIND_COMMENTTAG;
   default:
     return INDEXSTOREDB_SYMBOL_KIND_UNKNOWN;
+  }
+}
+
+static SymbolKind toIndexStoreDBSymbolKind(indexstoredb_symbol_kind_t K) {
+  switch (K) {
+      case INDEXSTOREDB_SYMBOL_KIND_MODULE:
+          return IndexStoreDB::SymbolKind::Module;
+      case INDEXSTOREDB_SYMBOL_KIND_NAMESPACE:
+          return IndexStoreDB::SymbolKind::Namespace;
+      case INDEXSTOREDB_SYMBOL_KIND_NAMESPACEALIAS:
+          return IndexStoreDB::SymbolKind::NamespaceAlias;
+      case INDEXSTOREDB_SYMBOL_KIND_MACRO:
+          return IndexStoreDB::SymbolKind::Macro;
+      case INDEXSTOREDB_SYMBOL_KIND_ENUM:
+          return IndexStoreDB::SymbolKind::Enum;
+      case INDEXSTOREDB_SYMBOL_KIND_STRUCT:
+          return IndexStoreDB::SymbolKind::Struct;
+      case INDEXSTOREDB_SYMBOL_KIND_CLASS:
+          return IndexStoreDB::SymbolKind::Class;
+      case INDEXSTOREDB_SYMBOL_KIND_PROTOCOL:
+          return IndexStoreDB::SymbolKind::Protocol;
+      case INDEXSTOREDB_SYMBOL_KIND_EXTENSION:
+          return IndexStoreDB::SymbolKind::Extension;
+      case INDEXSTOREDB_SYMBOL_KIND_UNION:
+          return IndexStoreDB::SymbolKind::Union;
+      case INDEXSTOREDB_SYMBOL_KIND_TYPEALIAS:
+          return IndexStoreDB::SymbolKind::TypeAlias;
+      case INDEXSTOREDB_SYMBOL_KIND_FUNCTION:
+          return IndexStoreDB::SymbolKind::Function;
+      case INDEXSTOREDB_SYMBOL_KIND_VARIABLE:
+          return IndexStoreDB::SymbolKind::Variable;
+      case INDEXSTOREDB_SYMBOL_KIND_FIELD:
+          return IndexStoreDB::SymbolKind::Field;
+      case INDEXSTOREDB_SYMBOL_KIND_ENUMCONSTANT:
+          return IndexStoreDB::SymbolKind::EnumConstant;
+      case INDEXSTOREDB_SYMBOL_KIND_INSTANCEMETHOD:
+          return IndexStoreDB::SymbolKind::InstanceMethod;
+      case INDEXSTOREDB_SYMBOL_KIND_CLASSMETHOD:
+          return IndexStoreDB::SymbolKind::ClassMethod;
+      case INDEXSTOREDB_SYMBOL_KIND_STATICMETHOD:
+          return IndexStoreDB::SymbolKind::StaticMethod;
+      case INDEXSTOREDB_SYMBOL_KIND_INSTANCEPROPERTY:
+          return IndexStoreDB::SymbolKind::InstanceProperty;
+      case INDEXSTOREDB_SYMBOL_KIND_CLASSPROPERTY:
+          return IndexStoreDB::SymbolKind::ClassProperty;
+      case INDEXSTOREDB_SYMBOL_KIND_STATICPROPERTY:
+          return IndexStoreDB::SymbolKind::StaticProperty;
+      case INDEXSTOREDB_SYMBOL_KIND_CONSTRUCTOR:
+          return IndexStoreDB::SymbolKind::Constructor;
+      case INDEXSTOREDB_SYMBOL_KIND_DESTRUCTOR:
+          return IndexStoreDB::SymbolKind::Destructor;
+      case INDEXSTOREDB_SYMBOL_KIND_CONVERSIONFUNCTION:
+          return IndexStoreDB::SymbolKind::ConversionFunction;
+      case INDEXSTOREDB_SYMBOL_KIND_PARAMETER:
+         return IndexStoreDB::SymbolKind::Parameter;
+      case INDEXSTOREDB_SYMBOL_KIND_COMMENTTAG:
+          return IndexStoreDB::SymbolKind::CommentTag;
+      default:
+          return IndexStoreDB::SymbolKind::Unknown;
   }
 }
 

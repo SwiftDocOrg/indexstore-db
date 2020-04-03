@@ -94,13 +94,13 @@ extension Symbol {
     self.init(
       usr: String(cString: indexstoredb_symbol_usr(value)),
       name: String(cString: indexstoredb_symbol_name(value)),
-      kind: IndexSymbolKind(indexstoredb_symbol_kind(value)))
+      kind: IndexSymbolKind(rawValue: indexstoredb_symbol_kind(value)))
   }
 }
 
-extension IndexSymbolKind {
-  init(_ cSymbolKind: indexstoredb_symbol_kind_t) {
-    switch cSymbolKind {
+extension IndexSymbolKind: RawRepresentable {
+  public init(rawValue: indexstoredb_symbol_kind_t) {
+    switch rawValue {
     case INDEXSTOREDB_SYMBOL_KIND_UNKNOWN:
       self = .unknown
     case INDEXSTOREDB_SYMBOL_KIND_MODULE:
@@ -161,4 +161,66 @@ extension IndexSymbolKind {
       self = .unknown
     }
   }
+
+    public var rawValue: indexstoredb_symbol_kind_t {
+        switch self {
+
+        case .unknown:
+            return INDEXSTOREDB_SYMBOL_KIND_UNKNOWN
+        case .module:
+            return INDEXSTOREDB_SYMBOL_KIND_MODULE
+        case .namespace:
+            return INDEXSTOREDB_SYMBOL_KIND_NAMESPACE
+        case .namespaceAlias:
+            return INDEXSTOREDB_SYMBOL_KIND_NAMESPACEALIAS
+        case .macro:
+            return INDEXSTOREDB_SYMBOL_KIND_MACRO
+        case .enum:
+            return INDEXSTOREDB_SYMBOL_KIND_ENUM
+        case .struct:
+            return INDEXSTOREDB_SYMBOL_KIND_STRUCT
+        case .class:
+            return INDEXSTOREDB_SYMBOL_KIND_CLASS
+        case .protocol:
+            return INDEXSTOREDB_SYMBOL_KIND_PROTOCOL
+        case .extension:
+            return INDEXSTOREDB_SYMBOL_KIND_EXTENSION
+        case .union:
+            return INDEXSTOREDB_SYMBOL_KIND_UNION
+        case .typealias:
+            return INDEXSTOREDB_SYMBOL_KIND_TYPEALIAS
+        case .function:
+            return INDEXSTOREDB_SYMBOL_KIND_FUNCTION
+        case .variable:
+            return INDEXSTOREDB_SYMBOL_KIND_VARIABLE
+        case .field:
+            return INDEXSTOREDB_SYMBOL_KIND_FIELD
+        case .enumConstant:
+            return INDEXSTOREDB_SYMBOL_KIND_ENUMCONSTANT
+        case .instanceMethod:
+            return INDEXSTOREDB_SYMBOL_KIND_INSTANCEMETHOD
+        case .classMethod:
+            return INDEXSTOREDB_SYMBOL_KIND_CLASSMETHOD
+        case .staticMethod:
+            return INDEXSTOREDB_SYMBOL_KIND_STATICMETHOD
+        case .instanceProperty:
+            return INDEXSTOREDB_SYMBOL_KIND_INSTANCEPROPERTY
+        case .classProperty:
+            return INDEXSTOREDB_SYMBOL_KIND_CLASSPROPERTY
+        case .staticProperty:
+            return INDEXSTOREDB_SYMBOL_KIND_STATICPROPERTY
+        case .constructor:
+            return INDEXSTOREDB_SYMBOL_KIND_CONSTRUCTOR
+        case .destructor:
+            return INDEXSTOREDB_SYMBOL_KIND_DESTRUCTOR
+        case .conversionFunction:
+            return INDEXSTOREDB_SYMBOL_KIND_CONVERSIONFUNCTION
+        case .parameter:
+            return INDEXSTOREDB_SYMBOL_KIND_PARAMETER
+        case .using:
+            return INDEXSTOREDB_SYMBOL_KIND_USING
+        case .commentTag:
+            return INDEXSTOREDB_SYMBOL_KIND_COMMENTTAG
+        }
+    }
 }

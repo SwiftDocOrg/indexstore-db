@@ -78,6 +78,13 @@ public final class IndexStoreDB {
     indexstoredb_index_poll_for_unit_changes_and_wait(impl)
   }
 
+    @discardableResult
+    public func forEachSymbolOccurrence(byKind kind: IndexSymbolKind, _ body: @escaping (SymbolOccurrence) -> Bool) -> Bool {
+        return  indexstoredb_index_symbol_occurrences_by_kind(impl, kind.rawValue) { occur in
+          return body(SymbolOccurrence(occur))
+        }
+    }
+
   @discardableResult
   public func forEachSymbolOccurrence(byUSR usr: String, roles: SymbolRole, _ body: @escaping (SymbolOccurrence) -> Bool) -> Bool {
     return indexstoredb_index_symbol_occurrences_by_usr(impl, usr, roles.rawValue) { occur in
